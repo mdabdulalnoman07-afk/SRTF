@@ -1,25 +1,35 @@
-n = 3
-bt = [6, 8, 7]
+def SRTF(n, at, bt):
+    rt, ct, wt, tat = bt[:], [0]*n, [0]*n, [0]*n
+    done, t, chart = 0, 0, []
+    while done < n:
+        idx = -1
+        for i in range(n):
+            if at[i] <= t and rt[i] > 0:
+                if idx == -1 or rt[i] < rt[idx]: idx = i
+        if idx != -1:
+            rt[idx] -= 1
+            chart.append(idx+1)
+            t += 1
+            if rt[idx] == 0:
+                ct[idx] = t
+                tat[idx] = ct[idx] - at[idx]
+                wt[idx] = tat[idx] - bt[idx]
+                done += 1
+        else:
+            chart.append(0)
+            t += 1
 
-bt.sort()
-wt = [0, bt[0], bt[0]+bt[1]]
-tat = [bt[i]+wt[i] for i in range(n)]
+    print("PID AT BT CT WT TAT")
+    for i in range(n):
+        print(f"{i+1:<3} {at[i]:<2} {bt[i]:<2} {ct[i]:<2} {wt[i]:<2} {tat[i]:<3}")
+    print("\nGANTT CHART:")
+    print("".join([f"|P{p}" if p else "|--" for p in chart]) + "|")
+    print("0" + "".join([f"{i+1:>3}" for i in range(len(chart))]))
+    print(f"\nAvg_WT = {sum(wt)/n:.2f}")
+    print(f"Avg_TAT = {sum(tat)/n:.2f}")
 
-print(f"{'Process':<8}{'BT':<6}{'WT':<6}{'TAT':<6}")
-
-for i in range(n):
-    print(f"{'P'+str(i+1):<8}{bt[i]:<6}{wt[i]:<6}{tat[i]:<6}")
-
-print(f"\nAverage Waiting Time: {sum(wt)/n:.2f}")
-print(f"Average Turnaround Time: {sum(tat)/n:.2f}")
-
-# Gantt Chart
-print("\nGantt Chart:")
-print(" ", end="")
-for i in range(n):
-    print(f"|  P{i+1}  ", end="")
-print("|")
-print("0", end="")
-for i in range(n):
-    print(f"      {tat[i]}", end="")
-print()
+if __name__ == "__main__":
+    n = 3
+    at = [0, 2, 0]
+    bt = [2, 1, 1]
+    SRTF(n, at, bt)
